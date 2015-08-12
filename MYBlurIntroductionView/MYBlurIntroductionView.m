@@ -118,10 +118,13 @@
             if (self.LanguageDirection == MYLanguageDirectionLeftToRight) {
                 self.LeftSkipButton.hidden = YES;
                 [self buildScrollViewLeftToRight];
-            }
-            else {
+            } else if (self.LanguageDirection == MYLanguageDirectionRightToLeft) {
                 self.RightSkipButton.hidden = YES;
                 [self buildScrollViewRightToLeft];
+            } else {
+              self.RightSkipButton.hidden = YES;
+              self.LeftSkipButton.hidden = YES;
+              [self buildScrollViewTouch];
             }
         }
         else {
@@ -156,7 +159,7 @@
     }
 }
 
--(void)buildScrollViewRightToLeft{
+-(void)buildScrollViewRightToLeft {
     CGFloat panelXOffset = self.frame.size.width*Panels.count;
     [self.MasterScrollView setContentSize:CGSizeMake(panelXOffset + self.frame.size.width, self.frame.size.height)];
     
@@ -177,6 +180,90 @@
     
     //Show the information at the first panel with animations
     [self animatePanelAtIndex:0];
+}
+
+- (void)buildScrollViewTouch {
+  CGFloat panelXOffset = 0;
+  for (MYIntroductionPanel *panelView in Panels) {
+    panelView.frame = CGRectMake(panelXOffset, 0, self.frame.size.width, self.frame.size.height);
+    [self.MasterScrollView addSubview:panelView];
+    
+    //Update panelXOffset to next view origin location
+    panelXOffset += panelView.frame.size.width;
+  }
+  
+  [self appendCloseViewAtXIndex:&panelXOffset];
+  
+  [self.MasterScrollView setContentSize:CGSizeMake(panelXOffset, self.frame.size.height)];
+  
+  //Show the information at the first panel with animations
+  [self animatePanelAtIndex:0];
+  
+  //Call first panel view did appear
+  if ([Panels[0] respondsToSelector:@selector(panelDidAppear)]) {
+    [Panels[0] panelDidAppear];
+  }
+  self.PageControl.hidden = YES;
+  self.CurrentPanelIndex = 0;
+  
+  if ([(id)delegate respondsToSelector:@selector(introduction:didChangeToPanel:withIndex:)]) {
+    [delegate introduction:self didChangeToPanel:Panels[self.CurrentPanelIndex] withIndex:self.CurrentPanelIndex];
+  }
+  
+  self.tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapGesture:)];
+  self.tapRecognizer.numberOfTapsRequired = 1;
+  [self addGestureRecognizer:self.tapRecognizer];
+  
+}
+
+- (void)onTapGesture:(UITapGestureRecognizer*)recognizer {
+  NSLog(@"onTapGesture -> ");
+  
+  if (self.CurrentPanelIndex >= Panels.count - 1) {
+    [UIView animateWithDuration:0.3 animations:^(){
+      self.alpha = 0.0;
+    } completion:^(BOOL finished) {
+      // 代理回调 控制器
+      if ([(id)delegate respondsToSelector:@selector(introduction:didFinishWithType:)]) {
+        [delegate introduction:self didFinishWithType:MYFinishTypeSwipeOut];
+      }
+      [self removeFromSuperview];
+    }];
+  
+  } else {
+  
+    LastPanelIndex = self.CurrentPanelIndex;
+    self.CurrentPanelIndex += 1;
+    
+    // Pannel 消失回调
+    if ([Panels[self.PageControl.currentPage] respondsToSelector:@selector(panelDidDisappear)]) {
+      [Panels[self.PageControl.currentPage] panelDidDisappear];
+    }
+   
+    [UIView animateWithDuration:0.3 animations:^(){
+      MYIntroductionPanel* panel = Panels[LastPanelIndex];
+      panel.alpha = 0.0;
+    } completion:^(BOOL finished) {
+      CGPoint p = self.MasterScrollView.contentOffset;
+      p.x += self.MasterScrollView.frame.size.width;
+      self.MasterScrollView.contentOffset = p;
+      
+      // 回调控制器
+      if ([(id)delegate respondsToSelector:@selector(introduction:didChangeToPanel:withIndex:)]) {
+        [delegate introduction:self didChangeToPanel:Panels[self.CurrentPanelIndex] withIndex:self.CurrentPanelIndex];
+      }
+
+      [UIView animateWithDuration:0.3 animations:^(){
+        MYIntroductionPanel* panel = Panels[self.CurrentPanelIndex];
+        panel.alpha = 1.0;
+      } completion:^(BOOL finished) {
+        // Pannel 出现回调
+        if ([Panels[self.CurrentPanelIndex] respondsToSelector:@selector(panelDidAppear)]) {
+          [Panels[self.CurrentPanelIndex] panelDidAppear];
+        }
+      }];
+    }];
+  }
 }
 
 #pragma mark - UIScrollView Delegate
@@ -270,7 +357,7 @@
             self.alpha = ((self.MasterScrollView.frame.size.width*(float)Panels.count)-self.MasterScrollView.contentOffset.x)/self.MasterScrollView.frame.size.width;
         }
     }
-    else if (self.LanguageDirection == MYLanguageDirectionRightToLeft){
+    else if (self.LanguageDirection == MYLanguageDirectionRightToLeft) {
         if (self.CurrentPanelIndex == 0) {
             self.alpha = self.MasterScrollView.contentOffset.x/self.MasterScrollView.frame.size.width;
         }

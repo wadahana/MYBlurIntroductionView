@@ -23,7 +23,8 @@ typedef enum {
 //Enum to define language direction
 typedef enum {
     MYLanguageDirectionLeftToRight = 0,
-    MYLanguageDirectionRightToLeft
+    MYLanguageDirectionRightToLeft = 1,
+    MYLanguageDirectionTouch = 2,
 }MYLanguageDirection;
 
 @class MYBlurIntroductionView;
@@ -63,7 +64,7 @@ typedef enum {
 @property (nonatomic, assign) NSInteger CurrentPanelIndex;
 @property (nonatomic, assign) MYLanguageDirection LanguageDirection;
 @property (nonatomic, retain) UIColor *UserBackgroundColor;
-
+@property (nonatomic, retain) UITapGestureRecognizer *tapRecognizer;
 /**
  *  Public method used to build panels
  *
