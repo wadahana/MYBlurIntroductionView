@@ -45,20 +45,25 @@
     
     //Create Panel From Nib
     MYIntroductionPanel *panel3 = [[MYIntroductionPanel alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height) nibNamed:@"TestPanel3"];
-    
+  
+  NSLog(@"-- %@", NSStringFromCGSize(self.view.frame.size));
+    MYIntroductionPanel *panel4 = [[MYIntroductionPanel alloc] initWithFrame:CGRectMake(0,0,self.view.frame.size.width, self.view.frame.size.height) image:[UIImage imageNamed:@"xxxx.png"]];
+  
     //Create custom panel with events
-    MYCustomPanel *panel4 = [[MYCustomPanel alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height) nibNamed:@"MYCustomPanel"];
+    MYCustomPanel *panel5 = [[MYCustomPanel alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height) nibNamed:@"MYCustomPanel"];
     
     //Add panels to an array
-    NSArray *panels = @[panel1, panel2, panel3, panel4];
+    NSArray *panels = @[panel1, panel2, panel3, panel4, panel5];
     
     //Create the introduction view and set its delegate
     MYBlurIntroductionView *introductionView = [[MYBlurIntroductionView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
     introductionView.delegate = self;
     introductionView.BackgroundImageView.image = [UIImage imageNamed:@"Toronto, ON.jpg"];
     [introductionView setBackgroundColor:[UIColor colorWithRed:90.0f/255.0f green:175.0f/255.0f blue:113.0f/255.0f alpha:0.65]];
+  
     //introductionView.LanguageDirection = MYLanguageDirectionRightToLeft;
-    
+    introductionView.LanguageDirection = MYLanguageDirectionTouch;
+
     //Build the introduction with desired panels
     [introductionView buildIntroductionWithPanels:panels];
     

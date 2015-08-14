@@ -42,7 +42,7 @@
     _imageView = [[UIImageView alloc]initWithImage:image];
     [_imageView sizeToFit];
     CGSize s = _imageView.frame.size;
-    _imageView.frame = CGRectMake(0,0,kScreenWidth,kScreenWidth/s.width*s.height);
+    _imageView.frame = CGRectMake(0,0,frame.size.width,frame.size.width/s.width*s.height);
     [self addSubview:_imageView];
   }
   return self;
