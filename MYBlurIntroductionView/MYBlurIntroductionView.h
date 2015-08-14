@@ -65,6 +65,7 @@ typedef enum {
 @property (nonatomic, assign) MYLanguageDirection LanguageDirection;
 @property (nonatomic, retain) UIColor *UserBackgroundColor;
 @property (nonatomic, retain) UITapGestureRecognizer *tapRecognizer;
+@property (nonatomic, assign) BOOL stopAtLastPanel;
 /**
  *  Public method used to build panels
  *

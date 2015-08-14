@@ -22,6 +22,7 @@
     if (self = [super initWithFrame:frame]) {
         self.MasterScrollView.delegate = self;
         self.frame = frame;
+        self.stopAtLastPanel = NO;
         [self initializeViewComponents];
     }
     return self;
@@ -145,14 +146,15 @@
         //Update panelXOffset to next view origin location
         panelXOffset += panelView.frame.size.width;
     }
-    
-    [self appendCloseViewAtXIndex:&panelXOffset];
-    
+    if (!_stopAtLastPanel) {
+      [self appendCloseViewAtXIndex:&panelXOffset];
+    }
+  
     [self.MasterScrollView setContentSize:CGSizeMake(panelXOffset, self.frame.size.height)];
     
     //Show the information at the first panel with animations
     [self animatePanelAtIndex:0];
-    
+  
     //Call first panel view did appear
     if ([Panels[0] respondsToSelector:@selector(panelDidAppear)]) {
         [Panels[0] panelDidAppear];
@@ -170,9 +172,10 @@
         
         panelXOffset -= panelView.frame.size.width;
     }
-    
-    [self appendCloseViewAtXIndex:&panelXOffset];
-    
+
+    if (!_stopAtLastPanel) {
+      [self appendCloseViewAtXIndex:&panelXOffset];
+    }
     
     [self.MasterScrollView setContentOffset:CGPointMake(self.frame.size.width*Panels.count, 0)];
     
@@ -205,7 +208,7 @@
   }
   self.PageControl.hidden = YES;
   self.CurrentPanelIndex = 0;
-  
+  self.MasterScrollView.userInteractionEnabled = NO;
   if ([(id)delegate respondsToSelector:@selector(introduction:didChangeToPanel:withIndex:)]) {
     [delegate introduction:self didChangeToPanel:Panels[self.CurrentPanelIndex] withIndex:self.CurrentPanelIndex];
   }

@@ -25,14 +25,14 @@ static UIColor *kSeparatorLineColor = nil;
 @interface MYIntroductionPanel : UIView
 
 @property (weak) MYBlurIntroductionView *parentIntroductionView;
-
+@property (nonatomic, strong) UIImageView *imageView;
 //Init Methods
 -(id)initWithFrame:(CGRect)frame title:(NSString *)title description:(NSString *)description;
 -(id)initWithFrame:(CGRect)frame title:(NSString *)title description:(NSString *)description header:(UIView *)headerView;
 -(id)initWithFrame:(CGRect)frame title:(NSString *)title description:(NSString *)description image:(UIImage *)image;
 -(id)initWithFrame:(CGRect)frame title:(NSString *)title description:(NSString *)description image:(UIImage *)image header:(UIView *)headerView;
 -(id)initWithFrame:(CGRect)frame nibNamed:(NSString *)nibName;
-
+-(id)initWithFrame:(CGRect)frame image:(UIImage*)image;
 //Support Methods
 +(BOOL)runningiOS7;
 

@@ -30,9 +30,22 @@
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
+        _imageView = nil;
         [self initializeConstants];
     }
     return self;
+}
+
+-(id)initWithFrame:(CGRect)frame image:(UIImage*)image {
+  self = [self initWithFrame:frame];
+  if (self && image) {
+    _imageView = [[UIImageView alloc]initWithImage:image];
+    [_imageView sizeToFit];
+    CGSize s = _imageView.frame.size;
+    _imageView.frame = CGRectMake(0,0,kScreenWidth,kScreenWidth/s.width*s.height);
+    [self addSubview:_imageView];
+  }
+  return self;
 }
 
 -(id)initWithFrame:(CGRect)frame title:(NSString *)title description:(NSString *)description{
